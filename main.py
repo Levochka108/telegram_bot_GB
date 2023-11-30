@@ -1,6 +1,6 @@
 
+from db_graphics.GraphicsController import MainGraphic
 from telebot import types
-from db_img.GraphicsController import *
 from temp_token import my_token
 import telebot
 
@@ -31,9 +31,8 @@ def message_replay(message):
         hunt = types.KeyboardButton('Охотник')
         markup.add(warrior, mage, hunt)
         
-        bot.send_photo(message.chat.id, main_image())
+        bot.send_photo(message.chat.id, MainGraphic.main_image())
         bot.send_message(message.chat.id, text_mes, reply_markup=markup, parse_mode='html')
-
     elif message.text == 'Воин':
         bot.send_message(message.chat.id, '<b>🗡Ты выбрал воина - круто!🗡</b>', parse_mode='html')
         keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
@@ -41,11 +40,21 @@ def message_replay(message):
         bt_help = types.KeyboardButton(text="Правила игры")
         bt_next = types.KeyboardButton(text="Пропустить")
         keyboard.add(bt_game, bt_help, bt_next)
-        bot.send_video(message.chat.id, main_warrior())
+        bot.send_video(message.chat.id, MainGraphic.main_warrior())
         bot.send_message(message.chat.id,
                          "<i>Перед началом игры \nможно ознакомся с правилами.\nЛибо пропустить.</i>",
                          reply_markup=keyboard, parse_mode='html')
-
+    elif message.text == 'Чародей':
+        bot.send_message(message.chat.id, '<b>🔥Ты выбрал Чародейку - круто!🔥</b>', parse_mode='html')
+        keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+        bt_game = types.KeyboardButton(text="Начать играть")
+        bt_help = types.KeyboardButton(text="Правила игры")
+        bt_next = types.KeyboardButton(text="Пропустить")
+        keyboard.add(bt_game, bt_help, bt_next)
+        bot.send_video(message.chat.id, MainGraphic.main_warrior())
+        bot.send_message(message.chat.id,
+                         "<i>Перед началом игры \nможно ознакомся с правилами.\nЛибо пропустить.</i>",
+                         reply_markup=keyboard, parse_mode='html')
 
 
 
