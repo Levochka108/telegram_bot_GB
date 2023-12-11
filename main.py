@@ -1,5 +1,5 @@
 
-from db_graphics.GraphicsController import MainGraphic
+from db_graphics.GraphicsController import MainGraphic, WarriorStory
 from telebot import types
 from temp_token import my_token
 import telebot
@@ -44,7 +44,7 @@ def message_replay(message):
         bt_game = types.KeyboardButton(text="Начать играть за Война")
         bt_help = types.KeyboardButton(text="Правила игры")
         keyboard.add(bt_game, bt_help)
-        bot.send_video(message.chat.id, MainGraphic.main_warrior())
+        bot.send_photo(message.chat.id, MainGraphic.main_warrior())
         bot.send_message(message.chat.id, "<i>Перед началом игры \nможно ознакомся с правилами.\nЛибо пропустить.</i>",
                          reply_markup=keyboard, parse_mode='html')
 
@@ -54,19 +54,21 @@ def message_replay(message):
             row_width=1, resize_keyboard=True)
         bt_warrior_1 = types.KeyboardButton(text="Задать вопрос старцу")
         keyboard.add(bt_warrior_1)
+        bot.send_photo(message.chat.id, WarriorStory.old_man_001())
         bot.send_message(message.chat.id, text_warrior_01,
                          reply_markup=keyboard, parse_mode='html')
 
     elif message.text == 'Задать вопрос старцу':
         text_warrior_2 = "Эй, старик, чем ты занят? Что же ты молчишь?"
         keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-        bt_warrior_2 = types.KeyboardButton(text="Продолжить")
+        bt_warrior_2 = types.KeyboardButton(text="Старик молчал")
         keyboard.add(bt_warrior_2)
         bot.send_message(message.chat.id, text_warrior_2,
                          reply_markup=keyboard, parse_mode='html')
 
-    elif message.text == "Продолжить":
-        text_warrior_03 = "Ты знатный воин и любимец женщин.\nВозвращаясь с охоты, гордый собой,\nты увидел старца, медитирующего на берегу реки."
+    elif message.text == "Старик молчал":
+        text_warrior_03 = "Старец, погруженный в транс, не ответил тебе. Ты видишь мертвую змею, лежащую неподалёку.\n"
+        "Подцепив её кончиком кинжала, решаешь подшутить над старцем."
         keyboard = types.ReplyKeyboardMarkup(
             row_width=1, resize_keyboard=True)
         bt_warrior_3 = types.KeyboardButton(text="Повесить змею старцу на шею")
@@ -85,6 +87,37 @@ def message_replay(message):
 
     elif message.text == "Уйти в свой замок":
         text_warrior = "Кажется, сегодня боги отвернулись от тебя. Выйдя из транса, старец с помощью внутреннего взора без труда увидел, кто подшутил над ним, и разгневался."
+        text_warrior_01 = "Продолжить"
+        keyboard = types.ReplyKeyboardMarkup(
+            row_width=1, resize_keyboard=True)
+        bt_warrior_1 = types.KeyboardButton(text=text_warrior_01)
+        keyboard.add(bt_warrior_1)
+
+        bot.send_photo(message.chat.id, WarriorStory.old_man_002())
+        bot.send_message(message.chat.id, text_warrior,
+                         reply_markup=keyboard, parse_mode='html')
+
+    elif message.text == 'Продолжить':
+        text_warrior = "О, знатный воин! ты слишком гордишься своим положением и забыл, \n "
+        'что такое уважение. За это я проклинаю тебя! Ты потеряешь свое богатство и будешь скитаться, покинутый всеми!'
+
+        text_warrior_01 = "Продолжить"
+        keyboard = types.ReplyKeyboardMarkup(
+            row_width=1, resize_keyboard=True)
+        bt_warrior_1 = types.KeyboardButton(text=text_warrior_01)
+        keyboard.add(bt_warrior_1)
+        bot.send_message(message.chat.id, text_warrior,
+                         reply_markup=keyboard, parse_mode='html')
+
+    elif message.text == 'Продолжить':
+        text_warrior = "В тот же миг твои замки вспыхнули, и только несколько слуг смогли спастись из огня. Твоя семья погибла, а на самого тебя напали лютые бандиты. Bзраненный, "
+        "ты бросаешься в реку и, ухватившись за бревнышко, плывешь вниз по течению. вскоре тебя спасают рыбаки, и ты узнаешь, что случилось с твоими замками и семьей."
+
+        text_warrior_01 = "Продолжить"
+        keyboard = types.ReplyKeyboardMarkup(
+            row_width=1, resize_keyboard=True)
+        bt_warrior_1 = types.KeyboardButton(text=text_warrior_01)
+        keyboard.add(bt_warrior_1)
         bot.send_message(message.chat.id, text_warrior, parse_mode='html')
 
 ###################################################################################################################################################
@@ -98,7 +131,7 @@ def message_replay(message):
         bt_help = types.KeyboardButton(text="Правила игры")
         bt_next = types.KeyboardButton(text="Пропустить")
         keyboard.add(bt_game, bt_help, bt_next)
-        bot.send_video(message.chat.id, MainGraphic.main_magic())
+        bot.send_photo(message.chat.id, MainGraphic.main_magic())
         bot.send_message(message.chat.id,
                          "<i>Перед началом игры \nможно ознакомся с правилами.\nЛибо пропустить.</i>",
                          reply_markup=keyboard, parse_mode='html')
@@ -126,6 +159,10 @@ class PrologWarrior:
                 message.chat.id, '<b>Игра началась!</b>', parse_mode='html')
 
 
-if __name__ == "__main__":
-    bot.polling(none_stop=True)
-    bot.infinity_polling()
+try:
+    # Запуск бота
+    if __name__ == '__main__':
+        bot.polling(none_stop=True)
+        bot.infinity_polling()
+except:
+    print('Ошибка запуска бота!')
