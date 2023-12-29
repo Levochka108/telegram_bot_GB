@@ -1,16 +1,22 @@
-
-from db_graphics.GraphicsController import MainGraphic, WarriorStory
-from telebot import types
-from temp_token import my_token
-import telebot
 import logging
+import telebot
+import time
+from temp_token import my_token
+
+
+from telebot import types
+from db_graphics.GraphicsController import MainGraphic, WarriorStory, EnchantressStory
+
+
+VERSION = 0.2
+
 
 FILENAME = 'logs/game_log.log'
 FORMAT = '%(asctime)s [%(levelname)s]: %(message)s'
 ENCODING = "utf-8"
 logging.basicConfig(filename=FILENAME, level=logging.INFO,
                     format=FORMAT, encoding=ENCODING)
-
+logger = logging.getLogger(__name__)
 
 bot = telebot.TeleBot((my_token()), parse_mode='html')
 user_states = {}
@@ -30,10 +36,10 @@ def start(message):
 @bot.message_handler(content_types="text")
 def message_replay(message):
 
-    user_state = user_states.get(message.chat.id, None)
+    # user_state = user_states.get(message.chat.id, None)
 
     # Пример логирования
-    logging.info(
+    logger.info(
         f"User {message.from_user.username} with ID {message.from_user.id} sent a message: {message.text}")
 
     if message.text == "Go":
@@ -156,19 +162,68 @@ def message_replay(message):
     elif user_states.get(message.chat.id) == 'return_journey_state' and message.text == "Отправиться в путь":
         text_warrior_return = "На данный момент бот находится в стадии разработки, и ты побывал на Альфа тестировании, Спасибо тебе за твой личний опыт взаимодейставия с ним. По вопросам сотрудничества выможете сомной связаться через \nemal: d.klochkov9421@gmail.com"
         bot.send_photo(message.chat.id, MainGraphic.final_photo())
-        bot.send_message(message.chat.id, text_warrior_return,
-                         parse_mode='html')
-
-        user_states.pop(message.chat.id)
 
         keyboard = types.ReplyKeyboardMarkup(
             row_width=0, resize_keyboard=False)
+        bot.send_message(message.chat.id, text_warrior_return, reply_markup=keyboard,
+                         parse_mode='html')
+        user_states.pop(message.chat.id)
+
+    elif message.text == "Чародей":
+        text_woman = "<b>🔮Ты выбрал Чародейку - круто!🔮</b>"
+        bot.send_message(
+            message.chat.id, text_woman, parse_mode='html')
+        keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+        bt_game = types.KeyboardButton(text="Начать играть за Чародейку")
+        bt_help = types.KeyboardButton(text="Правила игры")
+        user_states[message.chat.id] = 'Start_play'
+        keyboard.add(bt_game, bt_help)
+        bot.send_photo(message.chat.id, EnchantressStory.woman_001())
+        bot.send_message(message.chat.id, "<i>Перед началом игры \nможно ознакомиться с правилами.\nЛибо пропустить.</i>",
+                         reply_markup=keyboard, parse_mode='html')
+
+    elif user_states.get(message.chat.id) == 'Start_play' and message.text == "Начать играть за Чародейку":
+        text_woman = """<b>В загадочном лесу, чародейка, пробуждает все вокруг своим волшебством.</b>
+        Странствуя по лесу в посиках трав для своих настоек, чародейка встречает мудрого лесного духа.
+        Это не человек, не олень, не лешадь, нечто не обычное, привлекательно, такое приятно похнущее, в очаровывающее взгляд."""
+        bot.send_message(
+            message.chat.id, text_woman, parse_mode='html')
+        keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+        bt_game = types.KeyboardButton(text="Продолжить")
+        user_states[message.chat.id] = 'Speak'
+        keyboard.add(bt_game)
+        bot.send_photo(message.chat.id, EnchantressStory.woman_001())
+        text_woman_002 = """ У них происходит диалог """
+        bot.send_message(message.chat.id, text_woman_002,
+                         reply_markup=keyboard, parse_mode='html')
+    elif user_states.get(message.chat.id) == 'Speak' and message.text == "Продолжить":
+        user_states.pop(message.chat.id)
+        time.sleep(2)
+        text_woman = """— Чародейка, почему ты скрываешь свои силы? — спрашивает дух."""
+        bot.send_message(
+            message.chat.id, text_woman, parse_mode='html')
+        time.sleep(2)
+        text_woman_002 = """— Боюсь, что люди не пойму, — отвечает она."""
+        bot.send_message(message.chat.id, text_woman_002, parse_mode='html')
+        time.sleep(2)
+        text_woman_002 = """— Боюсь, что люди не оценят мои возможности, будут алчно меня использовать в своих целях, — отвечает она."""
+        bot.send_message(message.chat.id, text_woman_002, parse_mode='html')
+
+        keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+        bt_game = types.KeyboardButton(text="Продолжить разговор")
+        user_states[message.chat.id] = 'Speak_02'
+        keyboard.add(bt_game)
+        bot.send_photo(message.chat.id, EnchantressStory.woman_001())
+        text_woman_003 = """ У них происходит диалог """
+        bot.send_message(message.chat.id, text_woman_003,
+                         reply_markup=keyboard, parse_mode='html')
 
 
 if __name__ == '__main__':
     try:
         # Запуск бота
         bot.polling(none_stop=True)
+        print("Версия программы: {version}")
         # bot.infinity_polling()  # Вы можете использовать одну из этих строк, но не обе
     except Exception as e:
         print(f'Ошибка запуска бота: {e}')
